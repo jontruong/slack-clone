@@ -6,8 +6,23 @@ import Login from './components/Login';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import styled from 'styled-components';
+import db from './firebase';
+import { useEffect, useState } from 'react';
 
 function App() {
+  const [rooms, setRooms] = useState([])
+  const getChannels = () => {
+      db.collection('rooms').onSnapshot((snapshot) => {
+        setRooms(snapshot.docs.map((doc) => {
+          return {id: doc.id, name: doc.data().name };
+        })) ;
+      })
+  }
+  useEffect(()=> {
+    getChannels();
+  }, [])
+
+  console.log(rooms);
   return (
     <div className="App">
       <Router>
@@ -15,11 +30,11 @@ function App() {
           <Header>
           </Header>
           <Main>
-            <Sidebar>
+            <Sidebar rooms={rooms}>
             </Sidebar>
           <Switch>
            <Route path='/room'>
-              <Chat/>
+              <Chat />
             </Route>
            <Route path="/">
              <Login />
@@ -38,14 +53,12 @@ export default App;
 const Container = styled.div`
 width: 100%;
 height: 100vh;
-background: teal;
 display:grid;
 grid-template-rows: 38px auto;
 
 `
 
 const Main = styled.div`
-background: blue;
 display: grid;
 grid-template-columns: 260px auto;
 `
