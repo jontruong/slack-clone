@@ -36,7 +36,7 @@ form {
     input {
         flex: 1;
         border: none;
-        font-size: 30px;
+        font-size: 20px;
     }
 
     input: focus {
