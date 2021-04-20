@@ -1,13 +1,27 @@
 import React from 'react'
 import styled from 'styled-components';
-
-function Login() {
+import { auth, provider } from '../firebase';
+function Login(props) {
+    const signIn = () => {
+            auth.signInWithPopup(provider)
+            .then((result) => {
+                const newUser = {
+                    name: result.user.displayName,
+                    photo: result.user.photoURL,
+                }
+                localStorage.setItem('user', JSON.stringify(newUser));
+                props.setUser(newUser);
+            })
+            .catch((error) => {
+                alert(error.message)
+            })
+    }
     return (
         <Container>
             <Content>
                 <SlackImg src="http://assets.stickpng.com/images/5cb480cd5f1b6d3fbadece79.png"/>
                 <h1>Sign in Slack</h1>
-                <SignInButton>
+                <SignInButton onClick={() => signIn()}>
                     Sign in with Google
                 </SignInButton>
             </Content>
@@ -46,5 +60,12 @@ height: 100px;`
 const SignInButton = styled.button`
 margin-top: 50px;
 background-color: #0a8d48;
+color: white;
+border: none;
+height: 40px;
+border-radius: 4px;
+cursor: pointer;
+font-size: 15px;
+
 `
 

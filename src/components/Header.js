@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
-function Header() {
+function Header({user}) {
     return (
         <Container>
             <Main>
@@ -17,10 +17,10 @@ function Header() {
             </Main>
             <UserContainer>
                 <Name>
-                    Jon
+                    {user.name}
                 </Name>
                 <UserImage>
-                    <img src="https://i.imgur.com/6VBx3io.png" alt="profile" />
+                    <img src={user.photo ? user.photo : "https://i.imgur.com/6VBx3io.png"} alt="profile" />
                 </UserImage>
             </UserContainer>
         </Container>

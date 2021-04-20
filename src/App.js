@@ -10,7 +10,7 @@ import db from './firebase';
 import { useEffect, useState } from 'react';
 
 function App() {
-  const [user, setUser] = useState()
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
   const [rooms, setRooms] = useState([])
   const getChannels = () => {
       db.collection('rooms').onSnapshot((snapshot) => {
@@ -21,17 +21,17 @@ function App() {
   }
   useEffect(()=> {
     getChannels();
-  }, [])
+  }, []);
 
-  console.log(rooms);
+  
   return (
     <div className="App">
       <Router>
         {
-          !user ? <Login/> :
+          !user ? <Login setUser={setUser}/> :
 
         <Container>
-          <Header>
+          <Header user={user}>
           </Header>
           <Main>
             <Sidebar rooms={rooms}>
@@ -40,9 +40,6 @@ function App() {
            <Route path='/room'>
               <Chat />
             </Route>
-           <Route path="/">
-             <Login />
-           </Route>
          </Switch>
           </Main>
         </Container>
