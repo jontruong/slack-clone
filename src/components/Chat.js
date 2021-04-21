@@ -5,7 +5,7 @@ import ChatInput from '../components/ChatInput';
 import ChatMessage from '../components/ChatMessage';
 import db from '../firebase';
 import { useParams } from 'react-router-dom';
-import firebase from '../firebase';
+import firebase from 'firebase';
 
 function Chat({ user }) {
 
@@ -30,10 +30,11 @@ function Chat({ user }) {
         if(channelId){
             let payload = {
                 text:text,
-                timestamp: firebase.firestore.timestamp.now,
+                timestamp: firebase.firestore.Timestamp.now(),
                 user:user.name,
                 userImage:user.photo,
             }
+            db.collection("rooms").doc(channelId).collection('messages').add(payload)
         }
     }
 
@@ -81,7 +82,7 @@ function Chat({ user }) {
                         ))
                 }
             </MessageContainer>
-            <ChatInput>
+            <ChatInput sendMessage={sendMessage}>
                 
             </ChatInput>
         </Container>
@@ -93,6 +94,7 @@ export default Chat
 const Container = styled.div`
 display: grid;
 grid-template-rows: 64px auto min-content;
+min-height: 0;
 `
 const Header = styled.div`
 padding-left:20px;
@@ -127,6 +129,9 @@ margin-left: 10px;
 
 
 const MessageContainer = styled.div`
+display: flex;
+flex-direction: column;
+overflow-y: scroll;
 `
 
 
