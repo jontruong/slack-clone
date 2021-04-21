@@ -1,16 +1,62 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import ChatInput from '../components/ChatInput';
 import ChatMessage from '../components/ChatMessage';
+import db from '../firebase';
+import { useParams } from 'react-router-dom';
+import firebase from '../firebase';
 
-function Chat(props) {
+function Chat({ user }) {
+
+    let { channelId } = useParams();
+    const [channel, setChannel] = useState();
+    const [messages, setMessages] = useState([]);
+
+    const getMessages = () => {
+        db.collection('rooms')
+        .doc(channelId)
+        .collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot((snapshot) => {
+            let messages = snapshot.docs.map((doc) =>
+                doc.data());
+
+                setMessages(messages);
+        })
+    }
+
+    const sendMessage = (text) => {
+        if(channelId){
+            let payload = {
+                text:text,
+                timestamp: firebase.firestore.timestamp.now,
+                user:user.name,
+                userImage:user.photo,
+            }
+        }
+    }
+
+    const getChannel = () => {
+        db.collection('rooms')
+        .doc(channelId)
+        .onSnapshot((snapshot) => {
+            setChannel(snapshot.data())
+        })
+    }
+
+    useEffect(()=>{
+            getChannel();
+            getMessages();
+    }, 
+    [channelId])
+
     return (
         <Container>
             <Header>
                 <Channel>
                     <ChannelName>
-                    Channel
+                    # {channel && channel.name}
                     </ChannelName>
                     <ChannelInfo>
                         Details
@@ -24,7 +70,16 @@ function Chat(props) {
                 </ChannelDetails>
             </Header>
             <MessageContainer>
-                <ChatMessage/>
+                {
+                    messages.length > 0 && 
+                    messages.map((data, index) => (
+                        <ChatMessage
+                        text={data.text}
+                        name={data.user}
+                        image={data.userImage}
+                        time={data.timestamp}/>
+                        ))
+                }
             </MessageContainer>
             <ChatInput>
                 
